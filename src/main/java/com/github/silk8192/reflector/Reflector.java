@@ -111,8 +111,12 @@ public class Reflector {
             for (Method method : getType().getMethods()) {
                 if (method.getName().equals(name) && checkArgumentTypes(method.getParameterTypes(), types)) {
                     try {
-                        method.invoke(object, args);
-                        return new Reflector(object);
+                        if (method.getReturnType() == void.class) {
+                            method.invoke(object);
+                            return new Reflector(object);
+                        } else {
+                            return new Reflector(method.invoke(object, args));
+                        }
                     } catch (IllegalAccessException | InvocationTargetException e1) {
                         logger.error("Could not access method or find similar method", e1);
                     }
