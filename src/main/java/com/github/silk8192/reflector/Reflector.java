@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class Reflector {
@@ -97,6 +98,7 @@ public class Reflector {
      */
     public Reflector invoke(String name, Object... args) {
         Class<?>[] types = getParameterTypes(args);
+        Optional<Reflector> reflector = Optional.empty();
         try {
             Method method = getType().getMethod(name, types);
             if (checkArgumentTypes(method.getParameterTypes(), types)) {
@@ -125,7 +127,7 @@ public class Reflector {
         } catch (IllegalAccessException | InvocationTargetException e) {
             logger.error("Could not access method", e);
         }
-        return null;
+        return reflector.get();
     }
 
     /**
